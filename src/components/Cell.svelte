@@ -30,6 +30,7 @@
     padding: 0.5em 0.8em;
     font-weight: bold;
     text-align: center;
+    user-select: none;
   }
   .highlightSameNumber {
     background-color: var(--same-number-highlight-color);

@@ -1,60 +1,24 @@
 <script>
-  import Puzzle from "./components/Puzzle.svelte";
-  import NumberRow from "./components/NumberRow.svelte";
-  import { getSudoku } from "sudoku-gen";
+  import GameScreen from "./components/GameScreen.svelte";
+  import HomeScreen from "./components/HomeScreen.svelte";
 
-  const sudoku = getSudoku("easy");
-  let puzzle = sudoku.puzzle.replaceAll("-", "0").split("");
-  const solvedPuzzle = sudoku.solution;
-  let grid = [];
+  let start = false;
+  let selectedDificulty;
 
-  for (let i = 0; i < puzzle.length / 9; i++) {
-    const start = i * 9;
-    const end = i * 9 + 9;
-    grid.push(puzzle.slice(start, end));
+  function startGame() {
+    start = true;
   }
 
-  grid = grid.map((row) =>
-    row.map((number) => ({
-      number,
-      highlight: "none",
-      editable: number == 0 ? true : false,
-    }))
-  );
-
-  let selectedCell = null;
-  const setSelectedCell = (cell) => (selectedCell = cell);
-
-  function checkIfCorrect(x, y, number) {
-    const index = x * 9 + y;
-    const cell = grid[x][y];
-    if (number == solvedPuzzle[index]) {
-      cell.correct = true;
-      cell.wrong = false;
-    } else {
-      cell.wrong = true;
-    }
-
-    grid[x].splice(y, 1, cell);
-    grid = [...grid];
+  function setDificulty(difficulty) {
+    selectedDificulty = difficulty;
   }
-
-  function onButtonClick(number) {
-    if (selectedCell && selectedCell.isEditable) {
-      const { x, y } = selectedCell;
-      const cell = grid[x][y];
-      cell.number = number;
-      grid[x].splice(y, 1, cell);
-      grid = [...grid];
-      checkIfCorrect(x, y, number);
-    }
-  }
-
-  console.log(sudoku.solution);
 </script>
 
-<Puzzle {grid} {selectedCell} {setSelectedCell} />
-<NumberRow {onButtonClick} />
+{#if start}
+  <GameScreen difficulty={selectedDificulty} />
+{:else}
+  <HomeScreen {setDificulty} {startGame} />
+{/if}
 
 <style>
   :global(:root) {
